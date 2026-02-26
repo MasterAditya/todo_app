@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-10">
+
+<div class="max-w-xl mx-auto bg-white shadow-lg rounded-xl p-6">
+    <h1 class="text-2xl font-bold mb-4">Todo App</h1>
+
+    <form action="/add" method="post" class="flex gap-2 mb-4">
+        <input name="title" required
+            class="flex-1 border rounded px-3 py-2"
+            placeholder="New task..." />
+        <button class="bg-blue-500 text-white px-4 py-2 rounded">
+            Add
+        </button>
+    </form>
+
+    <div class="flex gap-3 text-sm mb-3">
+        <a href="/?filter=all" class="text-blue-500 hover:underline {% if filter == 'all' %}font-bold{% endif %}">All</a>
+        <a href="/?filter=active" class="text-blue-500 hover:underline {% if filter == 'active' %}font-bold{% endif %}">Active</a>
+        <a href="/?filter=completed" class="text-blue-500 hover:underline {% if filter == 'completed' %}font-bold{% endif %}">Completed</a>
+    </div>
+
+    <p class="text-sm text-gray-500 mb-3">
+        Total: {{ todos|length }} tasks
+    </p>
+
+    <ul>
+        {% if todos|length == 0 %}
+        <p class="text-gray-500 text-center py-4">
+            No tasks yet. Add one above.
+        </p>
+        {% else %}
+        {% for todo in todos %}
+        <li class="flex justify-between items-center border-b py-2">
+            <span class="{% if todo.completed %}line-through text-gray-400{% endif %}">
+                {{ todo.title }}
+            </span>
+
+            <p class="text-xs text-gray-400">
+                {{ todo.created_at.strftime('%d %b %Y %H:%M') }}
+            </p>
+
+            <div class="flex gap-2">
+                <form action="/complete/{{ todo.id }}" method="post">
+                    <button class="text-green-600 hover:text-green-800 font-bold">Complete</button>
+                </form>
+
+                <form action="/delete/{{ todo.id }}" method="post">
+                    <button class="text-red-600 hover:text-red-800 font-bold">Delete</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+
+</body>
+</html>
